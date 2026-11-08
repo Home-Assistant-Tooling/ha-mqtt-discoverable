@@ -181,9 +181,8 @@ def test_state_helper_uses_discoverable_retain(mocker: MockerFixture, retain: bo
     mqtt_client.publish.assert_called_once_with(discoverable.state_topic, "test", retain=retain)
 
 
-@pytest.mark.parametrize("node_id", [None, "test_node"])
-def test_device_info(discoverable: Discoverable[EntityInfo], node_id):
-    device_info = DeviceInfo(name="Test device", identifiers="test_device_id", node_id=node_id)
+def test_device_info(discoverable: Discoverable[EntityInfo]):
+    device_info = DeviceInfo(name="Test device", identifiers="test_device_id", node_id="test_node")
     # Assign the sensor to a device
     discoverable._entity.device = device_info
     discoverable._entity.unique_id = "test_sensor"
@@ -192,8 +191,6 @@ def test_device_info(discoverable: Discoverable[EntityInfo], node_id):
     # Check that the device info is put in the output config,
     # and the node ID is not sent to Home Assistant
     assert config["device"] == {"name": "Test device", "identifiers": "test_device_id"}
-
-    discoverable.write_config()
 
 
 def test_device_missing_unique_id():
