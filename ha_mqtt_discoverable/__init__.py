@@ -70,6 +70,12 @@ class EntityInfo(BaseModel):
     component: str
     """One of the supported MQTT components, for instance `binary_sensor`"""
     """Information about the sensor"""
+    default_entity_id: str | None = None
+    """Use default_entity_id instead of name for automatic generation of the entity ID. For example, valve.foobar.
+        When used without a unique_id, the entity ID will update during restart or reload if the entity ID is available.
+        If the entity ID already exists, the entity ID will be created with a number at the end.
+        When used with a unique_id, the default_entity_id is only used when the entity is added for the first time.
+        When set, this overrides a user-customized entity ID if the entity was deleted and added again."""
     device: DeviceInfo | None = None
     """Information about the device this sensor belongs to"""
     device_class: str | None = None
@@ -89,8 +95,6 @@ class EntityInfo(BaseModel):
     icon: str | None = None
     name: str
     """Name of the sensor inside Home Assistant"""
-    object_id: str | None = None
-    """Set this to generate the `entity_id` in HA instead of using `name`"""
     qos: int | None = None
     """The maximum QoS level to be used when receiving messages."""
     unique_id: str | None = None

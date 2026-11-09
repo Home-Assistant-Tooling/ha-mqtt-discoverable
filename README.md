@@ -46,6 +46,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
   - [Using UTF-8 field names in Home Assistant UI](#using-utf-8-field-names-in-home-assistant-ui)
   - [Using the same name for several devices](#using-the-same-name-for-several-devices)
+  - [Choosing the entity ID](#choosing-the-entity-id)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -954,6 +955,12 @@ kitchen_sensor.set_state(20.5)
 # Publishes to `hmd/sensor/bedroom_thermostat/Temperature/state`
 bedroom_sensor.set_state(18.0)
 ```
+
+### Choosing the entity ID
+
+Home Assistant generates the entity ID from the device and entity names, so devices sharing a name can end up with entity IDs like `sensor.thermostat_temperature_2`.
+Set _default_entity_id_ (e.g. `sensor.kitchen_thermostat_temperature`) to choose it yourself.
+See [Naming of MQTT entities](https://www.home-assistant.io/integrations/mqtt/#naming-of-mqtt-entities) for details.
 
 ## Contributing
 
