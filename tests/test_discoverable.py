@@ -32,7 +32,7 @@ from ha_mqtt_discoverable import DeviceInfo, Discoverable, EntityInfo, Settings
 @pytest.fixture
 def discoverable() -> Discoverable[EntityInfo]:
     mqtt_settings = Settings.MQTT(host="localhost")
-    sensor_info = EntityInfo(name="test", component="binary_sensor")
+    sensor_info = EntityInfo(name="test", component="binary_sensor", default_entity_id="binary_sensor.test")
     settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
     return Discoverable[EntityInfo](settings)
 
@@ -126,6 +126,7 @@ def test_generate_config(discoverable: Discoverable):
     assert device_config is not None
     assert device_config["name"] == "test"
     assert device_config["component"] == "binary_sensor"
+    assert device_config["default_entity_id"] == "binary_sensor.test"
     assert device_config["state_topic"] == "hmd/binary_sensor/test/state"
     assert device_config["json_attributes_topic"] == "hmd/binary_sensor/test/attributes"
 
@@ -151,7 +152,7 @@ def test_write_config(discoverable: Discoverable):
         discoverable.write_config()
         mock_publish.assert_called_once_with(
             "homeassistant/binary_sensor/test/config",
-            '{"component": "binary_sensor", "name": "test", '
+            '{"component": "binary_sensor", "default_entity_id": "binary_sensor.test", "name": "test", '
             '"state_topic": "hmd/binary_sensor/test/state", '
             '"json_attributes_topic": "hmd/binary_sensor/test/attributes"}',
             retain=True,
@@ -221,22 +222,6 @@ def test_name_with_space():
 def test_custom_display_name(discoverable_custom_display_name: Discoverable):
     config = discoverable_custom_display_name.generate_config()
     assert discoverable_custom_display_name._settings.entity.display_name == config["name"]
-
-
-def test_custom_object_id():
-    mqtt_settings = Settings.MQTT(host="localhost")
-    sensor_info = EntityInfo(name="Test name", component="binary_sensor", object_id="custom object id")
-    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    d = Discoverable[EntityInfo](settings)
-    d.write_config()
-
-
-def test_default_entity_id():
-    mqtt_settings = Settings.MQTT(host="localhost")
-    sensor_info = EntityInfo(name="test", component="binary_sensor", default_entity_id="binary_sensor.custom_entity_id")
-    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
-    d = Discoverable[EntityInfo](settings)
-    assert d.generate_config()["default_entity_id"] == "binary_sensor.custom_entity_id"
 
 
 def test_str(discoverable: Discoverable[EntityInfo]):
