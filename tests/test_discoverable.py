@@ -231,6 +231,14 @@ def test_custom_object_id():
     d.write_config()
 
 
+def test_default_entity_id():
+    mqtt_settings = Settings.MQTT(host="localhost")
+    sensor_info = EntityInfo(name="test", component="binary_sensor", default_entity_id="binary_sensor.custom_entity_id")
+    settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+    d = Discoverable[EntityInfo](settings)
+    assert d.generate_config()["default_entity_id"] == "binary_sensor.custom_entity_id"
+
+
 def test_str(discoverable: Discoverable[EntityInfo]):
     string = str(discoverable)
     assert "settings" in string

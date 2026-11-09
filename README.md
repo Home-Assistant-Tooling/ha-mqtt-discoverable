@@ -46,6 +46,7 @@ Using MQTT discoverable devices lets us add new sensors and devices to HA withou
   - [I'm having problems running in systemd-Service](#im-having-problems-running-in-systemd-service)
   - [Using UTF-8 field names in Home Assistant UI](#using-utf-8-field-names-in-home-assistant-ui)
   - [Using the same name for several devices](#using-the-same-name-for-several-devices)
+  - [Choosing the entity ID](#choosing-the-entity-id)
 - [Contributing](#contributing)
 - [Users of ha-mqtt-discoverable](#users-of-ha-mqtt-discoverable)
 - [Contributors](#contributors)
@@ -954,6 +955,42 @@ kitchen_sensor.set_state(20.5)
 # Publishes to `hmd/sensor/bedroom_thermostat/Temperature/state`
 bedroom_sensor.set_state(18.0)
 ```
+
+### Choosing the entity ID
+
+By default, Home Assistant generates the entity ID when it first creates the entity, based on the entity and device names among others.
+Devices sharing a name can then end up with entity IDs like `sensor.thermostat_temperature` and `sensor.thermostat_temperature_2`, which don't tell you which device is which.
+Set _default_entity_id_ to choose a meaningful entity ID yourself, independent of the names shown in the UI:
+
+```py
+from ha_mqtt_discoverable import Settings, DeviceInfo
+from ha_mqtt_discoverable.sensors import Sensor, SensorInfo
+
+# Configure the required parameters for the MQTT broker
+mqtt_settings = Settings.MQTT(host="localhost")
+
+device_info = DeviceInfo(name="Thermostat", identifiers="kitchen_thermostat")
+
+# Shown as "Thermostat Temperature" in Home Assistant, with entity ID `sensor.kitchen_thermostat_temperature`
+sensor_info = SensorInfo(
+    name="Temperature",
+    device_class="temperature",
+    unit_of_measurement="°C",
+    unique_id="kitchen_thermostat_temperature",
+    default_entity_id="sensor.kitchen_thermostat_temperature",
+    device=device_info,
+)
+
+settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+
+# Instantiate the sensor
+mysensor = Sensor(settings)
+
+# Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+mysensor.set_state(20.5)
+```
+
+Home Assistant only uses it when it creates the entity: renaming an existing entity ID is done in Home Assistant itself.
 
 ## Contributing
 

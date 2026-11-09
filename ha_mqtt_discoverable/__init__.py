@@ -70,6 +70,10 @@ class EntityInfo(BaseModel):
     component: str
     """One of the supported MQTT components, for instance `binary_sensor`"""
     """Information about the sensor"""
+    default_entity_id: str | None = None
+    """The entity ID Home Assistant uses when it first creates the entity, for instance
+        `binary_sensor.front_door`. If not set, Home Assistant generates it, based on the entity and device
+        names among others."""
     device: DeviceInfo | None = None
     """Information about the device this sensor belongs to"""
     device_class: str | None = None
@@ -90,7 +94,7 @@ class EntityInfo(BaseModel):
     name: str
     """Name of the sensor inside Home Assistant"""
     object_id: str | None = None
-    """Set this to generate the `entity_id` in HA instead of using `name`"""
+    """Deprecated: no longer supported by Home Assistant, use `default_entity_id` instead"""
     qos: int | None = None
     """The maximum QoS level to be used when receiving messages."""
     unique_id: str | None = None
