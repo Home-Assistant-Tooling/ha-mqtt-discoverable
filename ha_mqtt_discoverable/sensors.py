@@ -700,8 +700,9 @@ class DeviceTrigger(Discoverable[DeviceTriggerInfo]):
         """
         # retain is explicitly set to `False` to prevent
         # the last trigger event from replaying when
-        # Home Assistant reconnects
-        return self._update_state(payload, retain=False)
+        # Home Assistant reconnects, and force_update to `True`
+        # since every trigger is a new event, even with the same payload
+        return self._update_state(payload, retain=False, force_update=True)
 
 
 class Text(Subscriber[TextInfo]):
