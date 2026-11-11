@@ -16,6 +16,7 @@
 from unittest.mock import patch
 
 import pytest
+from paho.mqtt.client import MQTT_ERR_SUCCESS
 
 from ha_mqtt_discoverable import DeviceInfo, Settings
 from ha_mqtt_discoverable.sensors import DeviceTrigger, DeviceTriggerInfo
@@ -60,6 +61,10 @@ def test_trigger(device_trigger: DeviceTrigger):
     device_trigger.retain = True
     device_trigger.wrote_configuration = True
     with patch.object(device_trigger.mqtt_client, "publish") as mock_publish:
+        # Only a successful publish is remembered as the last state
+        mock_publish.return_value.rc = MQTT_ERR_SUCCESS
+        device_trigger.trigger("my_payload")
         device_trigger.trigger("my_payload")
 
-        mock_publish.assert_called_once_with(device_trigger.state_topic, "my_payload", retain=False)
+        mock_publish.assert_called_with(device_trigger.state_topic, "my_payload", retain=False)
+        assert mock_publish.call_count == 2
