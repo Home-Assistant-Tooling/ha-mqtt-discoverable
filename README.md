@@ -162,18 +162,17 @@ sensor_info = BinarySensorInfo(name="MySensor", device_class="motion")
 settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 
 # Instantiate the sensor
-mysensor = BinarySensor(settings)
+my_sensor = BinarySensor(settings)
 
 # Change the state of the sensor, publishing an MQTT message that gets picked up by HA
-mysensor.on()
-mysensor.off()
+my_sensor.on()
+my_sensor.off()
 
-# Or, change the state using a boolean
-mysensor.update_state(True)
-mysensor.update_state(False)
+# Or, set the state from a boolean value
+my_sensor.set_state(True)
 
 # You can also set custom attributes on the sensor via a Python dict
-mysensor.set_attributes({"my attribute": "awesome"})
+my_sensor.set_attributes({"my attribute": "awesome"})
 ```
 
 ### Button
@@ -612,10 +611,10 @@ sensor_info = SensorInfo(
 settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 
 # Instantiate the sensor
-mysensor = Sensor(settings)
+my_sensor = Sensor(settings)
 
 # Change the state of the sensor, publishing an MQTT message that gets picked up by HA
-mysensor.set_state(20.5)
+my_sensor.set_state(20.5)
 ```
 
 ### Switch
@@ -869,14 +868,14 @@ sensor_info = SensorInfo(
 settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 
 # Instantiate the sensor
-mysensor = Sensor(settings)
+my_sensor = Sensor(settings)
 
 # Change the state of the sensor, publishing an MQTT message that gets picked up by HA
-mysensor.set_state(20.5)
+my_sensor.set_state(20.5)
 # State will not be published as it is the same as before
-mysensor.set_state(20.5)
+my_sensor.set_state(20.5)
 # State will be published - it is the same as before but the update is forced
-mysensor.set_state(20.5, force_update=True)
+my_sensor.set_state(20.5, force_update=True)
 ```
 
 ## FAQ
