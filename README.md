@@ -12,7 +12,7 @@
 | tests/test\_button.py                  |       13 |        0 |        0 |        0 |     100% |           |
 | tests/test\_camera.py                  |       23 |        0 |        0 |        0 |     100% |           |
 | tests/test\_cover.py                   |       25 |        0 |        0 |        0 |     100% |           |
-| tests/test\_device\_trigger.py         |       27 |        0 |        0 |        0 |     100% |           |
+| tests/test\_device\_trigger.py         |       31 |        0 |        0 |        0 |     100% |           |
 | tests/test\_discoverable.py            |      280 |        0 |        0 |        0 |     100% |           |
 | tests/test\_image.py                   |       63 |        0 |        0 |        0 |     100% |           |
 | tests/test\_light.py                   |       61 |        0 |        0 |        0 |     100% |           |
@@ -25,7 +25,7 @@
 | tests/test\_switch.py                  |       20 |        0 |        0 |        0 |     100% |           |
 | tests/test\_text.py                    |       39 |        0 |        0 |        0 |     100% |           |
 | tests/test\_valve.py                   |       83 |        0 |        0 |        0 |     100% |           |
-| **TOTAL**                              | **1499** |    **0** |  **118** |    **0** | **100%** |           |
+| **TOTAL**                              | **1503** |    **0** |  **118** |    **0** | **100%** |           |
 
 
 ## Setup coverage badge
