@@ -290,6 +290,7 @@ my_cover.closed()
 
 From the [Home Assistant documentation](https://developers.home-assistant.io/docs/device_registry_index):
 > A device is a special entity in Home Assistant that is represented by one or more entities.
+
 A device is automatically created when an entity defines its `device` property.
 A device will be matched up with an existing device via supplied identifiers or connections, like serial numbers or MAC addresses.
 
@@ -576,7 +577,7 @@ settings = Settings(mqtt=mqtt_settings, entity=select_info)
 # To receive state commands from HA, define a callback function:
 def my_callback(client: Client, user_data, message: MQTTMessage):
     payload = message.payload.decode()
-    do_something()
+    do_something(payload)
 
 
 # Instantiate the selection
@@ -739,7 +740,7 @@ def my_callback(client: Client, user_data, message: MQTTMessage):
         # There is no my_valve.stopped(). This means
         # the function should call my_valve.open() or
         # my_valve.closed() depending on the valve
-        # state. Otherwise the former state remains
+        # state. Otherwise, the former state remains
         # active, this could thus be opening or
         # closing.
 
@@ -960,6 +961,20 @@ bedroom_sensor.set_state(18.0)
 Home Assistant generates the entity ID from the device and entity names, so devices sharing a name can end up with entity IDs like `sensor.thermostat_temperature_2`.
 Set _default_entity_id_ (e.g. `sensor.kitchen_thermostat_temperature`) to choose it yourself.
 See [Naming of MQTT entities](https://www.home-assistant.io/integrations/mqtt/#naming-of-mqtt-entities) for details.
+
+
+### Usage of `EntityInfo.expire_after` and repeated state updates
+
+If you configure `EntityInfo.expire_after`, Home Assistant marks the entity unavailable when it receives no state update within the configured time.
+
+By default, ha-mqtt-discoverable skips publishing a state when it matches the previous value.
+To keep a steady sensor available, pass `force_update=True` to the state update method often enough to reset the timer.
+For example:
+
+```py
+my_sensor.set_state(current_value, force_update=True)
+```
+
 
 ## Contributing
 
