@@ -13,7 +13,10 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
+from unittest.mock import patch
+
 import pytest
+from paho.mqtt.client import MQTT_ERR_SUCCESS
 
 from ha_mqtt_discoverable import Settings
 from ha_mqtt_discoverable.sensors import BinarySensor, BinarySensorInfo
@@ -46,3 +49,39 @@ def test_generate_config(sensor: BinarySensor):
 def test_update_state(sensor: BinarySensor):
     sensor.on()
     sensor.off()
+
+
+@pytest.mark.parametrize("state", [True, False])
+def test_set_state_expected_payload(sensor: BinarySensor, state: bool):
+    with patch.object(sensor, "_update_state") as mock_update_state:
+        sensor.set_state(state)
+
+    expected_payload = sensor._entity.payload_on if state else sensor._entity.payload_off
+    mock_update_state.assert_called_once_with(state=expected_payload, force_update=False)
+
+
+@pytest.mark.parametrize(
+    ("second_state", "force_update", "expected_call_count"),
+    [(True, False, 1), (True, True, 2), (False, False, 2), (False, True, 2)],
+)
+def test_set_state_duplicate(sensor: BinarySensor, second_state: bool, force_update: bool, expected_call_count: int):
+    sensor.wrote_configuration = True
+    with patch.object(sensor.mqtt_client, "publish") as mock_publish:
+        mock_publish.return_value.rc = MQTT_ERR_SUCCESS
+
+        sensor.set_state(True)
+        sensor.set_state(second_state, force_update=force_update)
+
+    assert mock_publish.call_count == expected_call_count
+
+
+def test_on_uses_set_state(sensor: BinarySensor):
+    with patch.object(sensor, "set_state") as mock_set_state:
+        sensor.on()
+        mock_set_state.assert_called_once_with(True, force_update=False)
+
+
+def test_off_uses_set_state(sensor: BinarySensor):
+    with patch.object(sensor, "set_state") as mock_set_state:
+        sensor.off(force_update=True)
+    mock_set_state.assert_called_once_with(False, force_update=True)
