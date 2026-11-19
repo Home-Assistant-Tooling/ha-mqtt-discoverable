@@ -1,6 +1,6 @@
 [project]
 name = "ha-mqtt-discoverable"
-version = "0.26.3"
+version = "0.27.0"
 description = "Python library for creating MQTT entities compatible with Home Assistant"
 authors = [{ name = "Joe Block", email = "jpb@unixorn.net" }]
 readme = "README.md"
@@ -22,7 +22,7 @@ classifiers = [
 ]
 dependencies = [
     "paho-mqtt>=2.2.0",
-    "pydantic>=2.14.3",
+    "pydantic>=2.14.4",
 ]
 
 [project.urls]
@@ -33,7 +33,7 @@ Documentation = "https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable#
 [dependency-groups]
 dev = [
     "pre-commit>=4.7.0",
-    "ruff>=0.17.5",
+    "ruff>=0.17.6",
 ]
 test = [
     "coverage>=7.17.3",
