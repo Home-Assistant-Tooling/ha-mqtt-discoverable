@@ -16,6 +16,7 @@
 from unittest.mock import patch
 
 import pytest
+from paho.mqtt.client import MQTT_ERR_SUCCESS
 from pydantic import ValidationError
 
 from ha_mqtt_discoverable import Settings
@@ -50,10 +51,18 @@ def test_generate_config(sensor: Sensor):
     assert config["suggested_display_precision"] == sensor._entity.suggested_display_precision
 
 
-def test_update_state(sensor: Sensor):
+@pytest.mark.parametrize(
+    ("second_state", "force_update", "expected_call_count"),
+    [(1, False, 1), (1, True, 2), (2, False, 2), (2, True, 2)],
+)
+def test_update_state(sensor: Sensor, second_state: int, force_update: bool, expected_call_count: int):
+    sensor.wrote_configuration = True
     with patch.object(sensor.mqtt_client, "publish") as mock_publish:
+        mock_publish.return_value.rc = MQTT_ERR_SUCCESS
         sensor.set_state(1)
-        mock_publish.assert_called_with(sensor.state_topic, "1", retain=False)
+        sensor.set_state(second_state, force_update=force_update)
+
+    assert mock_publish.call_count == expected_call_count
 
 
 def test_update_state_with_last_reset(sensor: Sensor):
